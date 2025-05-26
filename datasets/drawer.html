@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>MNIST Style Digit Drawer</title>
+  <style>
+    canvas {
+      border: 1px solid white;
+      background-color: black;
+      touch-action: none;
+    }
+    #preview {
+      image-rendering: pixelated;
+      border: 1px solid gray;
+    }
+  </style>
+</head>
+<body>
+
+<h2>🖊️ 28x28 MNIST-style Drawing Pad</h2>
+<canvas id="draw-canvas" width="280" height="280"></canvas><br>
+<button onclick="clearCanvas()">🧹 Clear</button>
+<select id="num">
+    <option value="0">0</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+    <option value="7">7</option>
+    <option value="8">8</option>
+    <option value="9">9</option>
+</select>
+<button onclick="saveImage()">💾 Download 28x28 PNG</button>
+<br><br>
+<small>28x28 Preview:</small><br>
+<canvas id="preview" width="28" height="28"></canvas>
+
+<script>
+  const canvas = document.getElementById('draw-canvas');
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.lineWidth = 20;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = 'white';
+
+  let drawing = false;
+
+  canvas.addEventListener('mousedown', e => {
+    drawing = true;
+    ctx.beginPath();
+    ctx.moveTo(e.offsetX, e.offsetY);
+  });
+
+  canvas.addEventListener('mousemove', e => {
+    if (!drawing) return;
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.stroke();
+    updatePreview();
+  });
+
+  canvas.addEventListener('mouseup', () => {
+    drawing = false;
+    updatePreview();
+  });
+
+  function clearCanvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    updatePreview();
+  }
+
+  function updatePreview() {
+    const preview = document.getElementById('preview');
+    const pctx = preview.getContext('2d');
+    pctx.drawImage(canvas, 0, 0, 28, 28);
+  }
+
+  function saveImage() {
+    updatePreview();
+    const num = document.getElementById('num').value;
+    const preview = document.getElementById('preview');
+    const link = document.createElement('a');
+    link.download = 'num-'+num+'.png';
+    link.href = preview.toDataURL();
+    link.click();
+    clearCanvas();
+  }
+</script>
+
+</body>
+</html>
