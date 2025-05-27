@@ -34,6 +34,9 @@
 </select>
 <button onclick="saveImage()">💾 Download 28x28 PNG</button>
 <br><br>
+<button id="predict-btn">🤖 Predict</button>
+<div id="result"></div>
+<br><br>
 <small>28x28 Preview:</small><br>
 <canvas id="preview" width="28" height="28"></canvas>
 
@@ -89,6 +92,32 @@
     link.click();
     clearCanvas();
   }
+
+
+  document.getElementById('predict-btn').addEventListener('click', async () => {
+    updatePreview();  // 미리보기 최신화
+    const preview = document.getElementById('preview');
+
+    // 28x28 이미지 -> base64
+    const imageData = preview.toDataURL('image/png');
+    const base64 = imageData.replace(/^data:image\/png;base64,/, "");
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/predictimg', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ img_base64: base64 })
+      });
+
+      const result = await response.json();
+      document.getElementById('result').innerText =
+        result.error ? `❌ Error: ${result.error}` : `✅ Prediction: ${result.prediction}`;
+    } catch (err) {
+      document.getElementById('result').innerText = '❌ Request failed: ' + err;
+    }
+  });
 </script>
 
 </body>
