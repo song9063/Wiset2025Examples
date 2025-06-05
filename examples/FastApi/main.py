@@ -1,6 +1,6 @@
 
 from tensorflow.keras.models import load_model
-model = load_model('hello_num.keras')
+model = load_model('number.keras')
 
 
 from fastapi import FastAPI, Request
@@ -44,7 +44,8 @@ async def predict(request: Request):
     except Exception as e:
         return JSONResponse(status_code=400, content={
             "prediction": None,
-            "error": str(e)
+            "error": str(e),
+            "duration": 1000
         })
         
 @app.get("/predict")

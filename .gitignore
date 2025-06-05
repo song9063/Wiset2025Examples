@@ -37,3 +37,5 @@ Temporary Items
 # End of https://www.toptal.com/developers/gitignore/api/macos
 
 datasets/FastApi
+examples/FastApi/venv
+__pycache__
